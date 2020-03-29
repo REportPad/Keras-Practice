@@ -4,7 +4,7 @@ uploaded = files.upload()
 
 #import data
 classNames = ['A','B','C','D']
-data = pd.read_excel('filename.xlsx', names=classNames)
+data = pd.read_csv('filename.csv', names=classNames)
 
 #Removing missing values
 import numpy as np
