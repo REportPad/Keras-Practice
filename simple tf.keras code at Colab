@@ -8,20 +8,20 @@ data = pd.read_excel('filename.xlsx', names=classNames)
 
 #Removing missing values
 import numpy as np
-dataNew = data.replace('?', np.nan)
+newData = data.replace('?', np.nan)
 print(dataNew.info())
 print(dataNew.describe())
 print(dataNew.isnull().sum())
-dataNew = dataNew.dropna()
-print(dataNew.info())
-print(dataNew.isnull().sum())
+newData = newData.dropna()
+print(newData.info())
+print(newData.isnull().sum())
 
 #Divide DataFrame
 InputNames = classNames
 InputNames.pop()
-columnRange = len(DataNew.columns)-1
-Input = pd.DataFrame(DataNew.iloc[:, 0:columnRange], columns=InputNames)
-Target = pd.DataFrame(DataNew.iloc[:, columnRange], columns=['D'])
+columnRange = len(newData.columns)-1
+Input = pd.DataFrame(newData.iloc[:, 0:columnRange], columns=InputNames)
+Target = pd.DataFrame(newData.iloc[:, columnRange], columns=['D'])
 
 #Data scaling
 from sklearn.preprocessing import StandardScaler
