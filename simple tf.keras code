@@ -1,0 +1,9 @@
+from tensorflow.keras import layers
+
+model = tf.keras.Sequential()
+model.add(layers.Dense(30, input_dim=13, activation='tanh'))
+model.add(layers.Dense(20, activation='tanh'))
+model.add(layers.Dense(1, activation='sigmoid'))
+
+model.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])
+model.fit(Input_train, Target_train, epochs=1000, verbose=1)
