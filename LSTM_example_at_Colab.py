@@ -5,20 +5,21 @@ uploaded = files.upload()
 #import data
 import pandas as pd
 import matplotlib.pyplot as plt
-np.random.seed(3)
+import numpy as np
+
+#np.random.seed(3)
 Data = pd.read_csv('filename.csv',header=0, usecols=['Date','Close'],parse_dates=True,index_col='Date')
 plt.figure(figsize=(10,5))
 plt.plot(Data)
 plt.show()
 
-#Data Analysis
-import numpy as np
-DataPCh = Data.pct_change()
-LogReturns = np.log(1 + DataPCh) 
-print(LogReturns.tail(10))
-plt.figure(figsize=(10,5))
-plt.plot(LogReturns)
-plt.show()
+##Data Analysis
+#DataPCh = Data.pct_change()
+#LogReturns = np.log(1 + DataPCh) 
+#print(LogReturns.tail(10))
+#plt.figure(figsize=(10,5))
+#plt.plot(LogReturns)
+#plt.show()
 
 #Data Size Adjustment
 from sklearn.preprocessing import MinMaxScaler
