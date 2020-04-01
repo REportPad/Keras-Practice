@@ -8,10 +8,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #np.random.seed(3)
-Data = pd.read_csv('filename.csv',header=0, usecols=['Date','Close'],parse_dates=True,index_col='Date')
-plt.figure(figsize=(10,5))
-plt.plot(Data)
-plt.show()
+#Data = pd.read_csv('filename.csv',header=0, usecols=['Date','Close'],parse_dates=True,index_col='Date')
+Data = pd.read_csv('train.csv')
+Data = Data.T
+Data=Data.drop('id',0)
+#plt.figure(figsize=(10,5))
+#plt.plot(Data)
+#plt.show()
 
 ##Data Analysis
 #DataPCh = Data.pct_change()
@@ -27,10 +30,10 @@ scaler = MinMaxScaler()
 DataScaled = scaler.fit_transform(Data)
 
 #Data Division
-TrainLen = int(len(DataScaled) * 0.70)
-TestLen = len(DataScaled) - TrainLen
-TrainData = DataScaled[0:TrainLen,:]
-TestData = DataScaled[TrainLen:len(DataScaled),:]
+TestLen = 12
+TrainLen = int(len(DataScaled) - TestLen)
+TrainData = DataScaled[0:TrainLen, :]
+TestData = DataScaled[TrainLen:len(DataScaled), :]
 print(len(TrainData), len(TestData))
 
 #LSTM Dataset Creation
@@ -53,7 +56,7 @@ from keras.models import Sequential
 from keras.layers import LSTM
 from keras.layers import Dense
 import tensorflow as tf
-tf.random.set_seed(3)
+#tf.random.set_seed(3)
 
 model = tf.keras.Sequential()
 model.add(layers.LSTM(256, input_shape=(1, TimeStep)))
