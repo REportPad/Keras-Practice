@@ -53,3 +53,8 @@ model.fit(X_train_t, y_train, epochs=100, batch_size=30, verbose=1, callbacks=[e
           
 df_y = pd.DataFrame(y_train)
 df_y.plot()
+
+
+# 6. 모델 저장하기
+from keras.models import load_model
+model.save('lstm_model.h5')
