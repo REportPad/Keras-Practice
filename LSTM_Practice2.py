@@ -55,6 +55,13 @@ df_y = pd.DataFrame(y_train)
 df_y.plot()
 
 
-# 6. 모델 저장하기
+#model 저장하기
 from keras.models import load_model
 model.save('lstm_model.h5')
+
+#model 불러오기
+from keras.models import load_model
+model = load_model('lstm_model.h5')
+
+#model 사용하기
+yhat = model.predict_classes(X_test_t)
