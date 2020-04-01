@@ -52,15 +52,12 @@ TrainX = np.reshape(TrainX, (TrainX.shape[0], 1, TrainX.shape[1]))
 TestX = np.reshape(TestX, (TestX.shape[0], 1, TestX.shape[1]))
 
 #Keras LSTM model generation
-from keras.models import Sequential
-from keras.layers import LSTM
-from keras.layers import Dense
 import tensorflow as tf
-#tf.random.set_seed(3)
+from tensorflow import keras
 
-model = tf.keras.Sequential()
-model.add(layers.LSTM(256, input_shape=(1, TimeStep)))
-model.add(layers.Dense(1))
+model = keras.Sequential()
+model.add(keras.layers.LSTM(256, input_shape=(1, TimeStep)))
+model.add(keras.layers.Dense(1))
 model.compile(loss='mean_squared_error',optimizer='adam',metrics=['accuracy'])
 model.fit(TrainX, TrainY, epochs=10, batch_size=1, verbose=1)
 model.summary()
