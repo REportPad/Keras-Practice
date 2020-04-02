@@ -6,8 +6,9 @@ import numpy as np
 import os
 import pandas as pd
 
-mpl.rcParams['figure.figsize'] = (8, 6)
-mpl.rcParams['axes.grid'] = False
+#about graph
+#mpl.rcParams['figure.figsize'] = (8, 6)
+#mpl.rcParams['axes.grid'] = False
 
 zip_path = tf.keras.utils.get_file(
     origin='https://storage.googleapis.com/tensorflow/tf-keras-datasets/jena_climate_2009_2016.csv.zip',
@@ -15,9 +16,12 @@ zip_path = tf.keras.utils.get_file(
     extract=True)
 csv_path, _ = os.path.splitext(zip_path)
 
+#(420551x14)
 df = pd.read_csv(csv_path)
 
-##
+#history_size is the size of the past window of information. 
+#The target_size is how far in the future does the model need to learn to predict. 
+#The target_size is the label that needs to be predicted.
 def multivariate_data(dataset, target, start_index, end_index, history_size,
                       target_size, step, single_step=False):
     data = []
@@ -37,9 +41,11 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
             labels.append(target[i:i+target_size])
 
     return np.array(data), np.array(labels)
-##
 
+#the first 300,000 rows of the data will be the training dataset, and there remaining will be the validation dataset.
 TRAIN_SPLIT = 300000
+
+#Setting seed to ensure reproducibility.
 tf.random.set_seed(13)
 
 #Part 2: Forecast a multivariate time series
