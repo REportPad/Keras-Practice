@@ -64,6 +64,8 @@ x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1],
                                              TRAIN_SPLIT, None, past_history,
                                              future_target, STEP)
 
+BATCH_SIZE = 256
+BUFFER_SIZE = 10000
 train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
 train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
 
