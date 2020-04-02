@@ -1,3 +1,4 @@
+#https://www.tensorflow.org/tutorials/structured_data/time_series
 import tensorflow as tf
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -16,21 +17,28 @@ csv_path, _ = os.path.splitext(zip_path)
 
 df = pd.read_csv(csv_path)
 
-def univariate_data(dataset, start_index, end_index, history_size, target_size):
-  data = []
-  labels = []
+##
+def multivariate_data(dataset, target, start_index, end_index, history_size,
+                      target_size, step, single_step=False):
+    data = []
+    labels = []
 
-  start_index = start_index + history_size
-  if end_index is None:
-    end_index = len(dataset) - target_size
+    start_index = start_index + history_size
+    if end_index is None:
+        end_index = len(dataset) - target_size
 
-  for i in range(start_index, end_index):
-    indices = range(i-history_size, i)
-    # Reshape data from (history_size,) to (history_size, 1)
-    data.append(np.reshape(dataset[indices], (history_size, 1)))
-    labels.append(dataset[i+target_size])
-  return np.array(data), np.array(labels)
-  
+    for i in range(start_index, end_index):
+        indices = range(i-history_size, i, step)
+        data.append(dataset[indices])
+
+        if single_step:
+            labels.append(target[i+target_size])
+        else:
+            labels.append(target[i:i+target_size])
+
+    return np.array(data), np.array(labels)
+##
+
 TRAIN_SPLIT = 300000
 tf.random.set_seed(13)
 
@@ -46,6 +54,9 @@ dataset = (dataset-data_mean)/data_std
 
 #Multi-step model
 future_target = 72
+past_history = 720
+STEP = 6
+
 x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0,
                                                  TRAIN_SPLIT, past_history,
                                                  future_target, STEP)
