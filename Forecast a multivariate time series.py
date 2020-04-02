@@ -112,11 +112,6 @@ train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZ
 val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
 val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
 
-def multi_step_plot(history, true_future, prediction):
-  plt.figure(figsize=(12, 6))
-  num_in = create_time_steps(len(history))
-  num_out = len(true_future)
-
 multi_step_model = tf.keras.models.Sequential()
 multi_step_model.add(tf.keras.layers.LSTM(32,
                                           return_sequences=True,
