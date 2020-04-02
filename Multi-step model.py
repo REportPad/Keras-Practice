@@ -81,6 +81,9 @@ multi_step_model.add(tf.keras.layers.Dense(72))
 
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
+
+EVALUATION_INTERVAL = 200
+EPOCHS = 10
 multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
