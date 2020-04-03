@@ -72,3 +72,6 @@ EPOCHS = 10
 simple_lstm_model.fit(train_univariate, epochs=EPOCHS,
                       steps_per_epoch=EVALUATION_INTERVAL,
                       validation_data=val_univariate, validation_steps=50)
+
+simple_lstm_model.save('model.h5')
+files.download('model.h5')
