@@ -19,7 +19,7 @@ df = df.drop('id',0)#(125 x 78587)
 #The target_size is how far in the future does the model need to learn to predict. 
 #The target_size is the label that needs to be predicted.
 def multivariate_data(dataset, target, start_index, end_index, history_size,
-                      target_size, step, single_step=False):
+                      target_size, step, single_step=False): #univariate: dataset, start_index, end_index, history_size, target_size
     data = []
     labels = []
 
@@ -61,9 +61,9 @@ dataset = (df-data_mean)/data_std
 #Thus, 120 observation represent history of the last five days.
 #For the single step prediction model, the label for a datapoint is the temperature 12 hours into the future. 
 #In order to create a label for this, the temperature after 72(12*6) observations is used.
-future_target = 12 #72, predict point
-past_history = 12 #720(5days * 24hour * 6times)
-STEP = 1 #6
+future_target = 12 #the number of predicted point
+past_history = 12 #In order to make this prediction, you choose to use 5 days of observations.
+STEP = 1
 dataset = dataset.to_numpy()
 x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1],           0, TRAIN_SPLIT, past_history, future_target, STEP)
 x_val_multi, y_val_multi     = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT,        None, past_history, future_target, STEP)
