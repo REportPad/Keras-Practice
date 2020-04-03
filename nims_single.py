@@ -15,7 +15,6 @@ df = pd.read_csv(csv_path)
 df = df.T
 df = df.drop('id',0)#(125 x 78587)
 
-
 def univariate_data(dataset, start_index, end_index, history_size, target_size):
     data = []
     labels = []
@@ -50,8 +49,8 @@ x_val_uni, y_val_uni = univariate_data(uni_data, TRAIN_SPLIT, None,
                                        univariate_past_history,
                                        univariate_future_target)
                                        
-BATCH_SIZE = 256
-BUFFER_SIZE = 10000
+BATCH_SIZE = 32
+BUFFER_SIZE = 50
 
 train_univariate = tf.data.Dataset.from_tensor_slices((x_train_uni, y_train_uni))
 train_univariate = train_univariate.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
