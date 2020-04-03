@@ -69,9 +69,9 @@ BATCH_SIZE = 8 #??
 BUFFER_SIZE = 100 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
 train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
 train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
-train_data_multi = train_data_multi.batch(BATCH_SIZE)
+
 val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
-val_data_multi = val_data_multi.batch(BATCH_SIZE)
+val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
 
 #LSTM model
 multi_step_model = tf.keras.models.Sequential()
