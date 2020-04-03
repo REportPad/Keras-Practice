@@ -8,8 +8,11 @@ import pandas as pd
 
 csv_path = 'C:/' 
 
-#(420551x14)
+#(Nx125)
 df = pd.read_csv(csv_path)
+
+#transpose
+df = df.T #(125xN)
 
 #history_size is the size of the past window of information. 
 #The target_size is how far in the future does the model need to learn to predict. 
@@ -34,14 +37,14 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 
     return np.array(data), np.array(labels)
 
-#the first 300,000 rows of the data will be the training dataset, and there remaining will be the validation dataset.
-TRAIN_SPLIT = 300000
+#the first 113 rows of the data will be the training dataset, and there remaining will be the validation dataset.
+TRAIN_SPLIT = 113 #125-12
 
 #Setting seed to ensure reproducibility.
 tf.random.set_seed(13)
 
 ##Part 2: Forecast a multivariate time series
-features_considered = ['p (mbar)', 'T (degC)', 'rho (g/m**3)']
+features_considered = ['0':'78525']#['p (mbar)', 'T (degC)', 'rho (g/m**3)']
 features = df[features_considered]
 features.index = df['Date Time']
 
@@ -57,16 +60,16 @@ dataset = (dataset-data_mean)/data_std
 #Thus, 120 observation represent history of the last five days.
 #For the single step prediction model, the label for a datapoint is the temperature 12 hours into the future. 
 #In order to create a label for this, the temperature after 72(12*6) observations is used.
-future_target = 72 #(12*6)
-past_history = 720 #(5days * 24hour * 6times)
-STEP = 6
+future_target = 12 #(12*6)
+past_history = 12 #(5days * 24hour * 6times)
+STEP = 12
 x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0,
                                                  TRAIN_SPLIT, past_history,
                                                  future_target, STEP)
 x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1],
                                              TRAIN_SPLIT, None, past_history,
                                              future_target, STEP)
-#train data, test data
+#train data, test data ?
 BATCH_SIZE = 256
 BUFFER_SIZE = 10000 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
 
@@ -82,7 +85,7 @@ multi_step_model.add(tf.keras.layers.LSTM(32,
                                           return_sequences=True,
                                           input_shape=x_train_multi.shape[-2:]))
 multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
-multi_step_model.add(tf.keras.layers.Dense(72))
+multi_step_model.add(tf.keras.layers.Dense(12)) #since 12 predictions are made, the dense layer outputs 12 predictions.
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
 EVALUATION_INTERVAL = 200 #Train for 200 steps
@@ -91,3 +94,5 @@ multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
                                           validation_steps=50)
+
+
