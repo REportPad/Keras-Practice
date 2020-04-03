@@ -45,10 +45,6 @@ TRAIN_SPLIT = 113 #125-12
 #tf.random.set_seed(13)
 
 ##Part 2: Forecast a multivariate time series
-#features_considered = ['0':'78525']#['p (mbar)', 'T (degC)', 'rho (g/m**3)']
-#features = df[features_considered]
-#features.index = df['Date Time']
-
 #the first step will be to standardize the dataset using the mean and standard deviation of the training data.
 #dataset = features.values
 data_mean = df[:TRAIN_SPLIT].mean(axis=0)#dataset[:TRAIN_SPLIT].mean(axis=0)
@@ -62,20 +58,20 @@ dataset = (df-data_mean)/data_std
 #For the single step prediction model, the label for a datapoint is the temperature 12 hours into the future. 
 #In order to create a label for this, the temperature after 72(12*6) observations is used.
 future_target = 12 #the number of predicted point
-past_history = 12 #In order to make this prediction, you choose to use 5 days of observations.
+past_history = 24 #In order to make this prediction, you choose to use 5 days of observations.
 STEP = 1
 dataset = dataset.to_numpy()
 x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1],           0, TRAIN_SPLIT, past_history, future_target, STEP)
 x_val_multi, y_val_multi     = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT,        None, past_history, future_target, STEP)
 
 #train data, test data
-BATCH_SIZE = 8#??
-#BUFFER_SIZE = 10000 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
+BATCH_SIZE = 8 #??
+BUFFER_SIZE = 100 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
 train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
-#train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
-train_data_multi = train_data_multi.batch(BATCH_SIZE).repeat()
+train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+train_data_multi = train_data_multi.batch(BATCH_SIZE)
 val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
-val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
+val_data_multi = val_data_multi.batch(BATCH_SIZE)
 
 #LSTM model
 multi_step_model = tf.keras.models.Sequential()
@@ -84,11 +80,11 @@ multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
 multi_step_model.add(tf.keras.layers.Dense(12)) #since 12 predictions are made, the dense layer outputs 12 predictions.
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
-EVALUATION_INTERVAL = 100 #Train for N steps
+EVALUATION_INTERVAL = 50 #Train for N steps
 EPOCHS = 10
 multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
-                                          validation_steps=25)
+                                          validation_steps=10)
 
 
