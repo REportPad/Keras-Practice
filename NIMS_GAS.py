@@ -12,8 +12,8 @@ csv_path = 'C:/ML/city gas/train2.csv'
 df = pd.read_csv(csv_path)
 
 #transpose
-df = df.T #(125xN)
-df = df.drop('id',0)
+df = df.T
+df = df.drop('id',0)#(125 x 78587)
 
 #history_size is the size of the past window of information. 
 #The target_size is how far in the future does the model need to learn to predict. 
@@ -61,22 +61,21 @@ dataset = (df-data_mean)/data_std
 #Thus, 120 observation represent history of the last five days.
 #For the single step prediction model, the label for a datapoint is the temperature 12 hours into the future. 
 #In order to create a label for this, the temperature after 72(12*6) observations is used.
-future_target = 12 #(12*6)
-past_history = 113 #(5days * 24hour * 6times)
-STEP = 12
-x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0, TRAIN_SPLIT, past_history, future_target, STEP)
-x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT, None, past_history, future_target, STEP)
+future_target = 12 #72, predict point
+past_history = 12 #720(5days * 24hour * 6times)
+STEP = 1 #6
+dataset = dataset.to_numpy()
+x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1],           0, TRAIN_SPLIT, past_history, future_target, STEP)
+x_val_multi, y_val_multi     = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT,        None, past_history, future_target, STEP)
 
 #train data, test data
-#BATCH_SIZE = 256
+BATCH_SIZE = 256
 #BUFFER_SIZE = 10000 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
 train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
 #train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+train_data_multi = train_data_multi.batch(BATCH_SIZE).repeat()
 val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
-#val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
-
-#x_train_multi = dataset[0:TRAIN_SPLIT, :]
-#y_train_multi = dataset[TRAIN_SPLIT:len(dataset), :]
+val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
 
 #LSTM model
 multi_step_model = tf.keras.models.Sequential()
@@ -90,6 +89,6 @@ EPOCHS = 10
 multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
-                                          validation_steps=50)
+                                          validation_steps=20)
 
 
