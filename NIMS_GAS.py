@@ -42,7 +42,7 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 TRAIN_SPLIT = 113 #125-12
 
 #Setting seed to ensure reproducibility.
-tf.random.set_seed(13)
+#tf.random.set_seed(13)
 
 ##Part 2: Forecast a multivariate time series
 #features_considered = ['0':'78525']#['p (mbar)', 'T (degC)', 'rho (g/m**3)']
@@ -61,22 +61,22 @@ dataset = (df-data_mean)/data_std
 #Thus, 120 observation represent history of the last five days.
 #For the single step prediction model, the label for a datapoint is the temperature 12 hours into the future. 
 #In order to create a label for this, the temperature after 72(12*6) observations is used.
-#future_target = 12 #(12*6)
-#past_history = 113 #(5days * 24hour * 6times)
-#STEP = 12
-#x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0, TRAIN_SPLIT, past_history, future_target, STEP)
-#x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT, None, past_history, future_target, STEP)
+future_target = 12 #(12*6)
+past_history = 113 #(5days * 24hour * 6times)
+STEP = 12
+x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0, TRAIN_SPLIT, past_history, future_target, STEP)
+x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT, None, past_history, future_target, STEP)
 
 #train data, test data
 #BATCH_SIZE = 256
 #BUFFER_SIZE = 10000 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
-#train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
+train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
 #train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
-#val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
+val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
 #val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
 
-train_data_multi = dataset[0:TRAIN_SPLIT, :]
-val_data_multi = dataset[TRAIN_SPLIT:len(dataset), :]
+#x_train_multi = dataset[0:TRAIN_SPLIT, :]
+#y_train_multi = dataset[TRAIN_SPLIT:len(dataset), :]
 
 #LSTM model
 multi_step_model = tf.keras.models.Sequential()
