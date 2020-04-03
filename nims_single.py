@@ -39,7 +39,7 @@ uni_train_mean = uni_data[:TRAIN_SPLIT].mean()
 uni_train_std = uni_data[:TRAIN_SPLIT].std()
 uni_data = (uni_data-uni_train_mean)/uni_train_std
 
-univariate_past_history = 20
+univariate_past_history = 10
 univariate_future_target = 0
 uni_data = uni_data.to_numpy()
 x_train_uni, y_train_uni = univariate_data(uni_data, 0, TRAIN_SPLIT,
@@ -49,8 +49,8 @@ x_val_uni, y_val_uni = univariate_data(uni_data, TRAIN_SPLIT, None,
                                        univariate_past_history,
                                        univariate_future_target)
                                        
-BATCH_SIZE = 32
-BUFFER_SIZE = 50
+BATCH_SIZE = 5
+BUFFER_SIZE = 10
 
 train_univariate = tf.data.Dataset.from_tensor_slices((x_train_uni, y_train_uni))
 train_univariate = train_univariate.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
