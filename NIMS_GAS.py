@@ -84,11 +84,11 @@ multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
 multi_step_model.add(tf.keras.layers.Dense(12)) #since 12 predictions are made, the dense layer outputs 12 predictions.
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
-EVALUATION_INTERVAL = 200 #Train for 200 steps
+EVALUATION_INTERVAL = 100 #Train for N steps
 EPOCHS = 10
 multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
-                                          validation_steps=50)
+                                          validation_steps=25)
 
 
