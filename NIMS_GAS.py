@@ -6,7 +6,7 @@ import numpy as np
 import os
 import pandas as pd
 
-csv_path = 'C:/' 
+csv_path = 'C:/ML/city gas/train2.csv'
 
 #(Nx125)
 df = pd.read_csv(csv_path)
