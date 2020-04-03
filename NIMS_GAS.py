@@ -69,7 +69,7 @@ x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1],        
 x_val_multi, y_val_multi     = multivariate_data(dataset, dataset[:, 1], TRAIN_SPLIT,        None, past_history, future_target, STEP)
 
 #train data, test data
-BATCH_SIZE = 256
+BATCH_SIZE = 8#??
 #BUFFER_SIZE = 10000 #shuffle will initially select a random element from only the first 1,0000 elements in the buffer.
 train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
 #train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
@@ -84,11 +84,11 @@ multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
 multi_step_model.add(tf.keras.layers.Dense(12)) #since 12 predictions are made, the dense layer outputs 12 predictions.
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
-EVALUATION_INTERVAL = 100 #Train for 100 steps
+EVALUATION_INTERVAL = 200 #Train for 200 steps
 EPOCHS = 10
 multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
                                           steps_per_epoch=EVALUATION_INTERVAL,
                                           validation_data=val_data_multi,
-                                          validation_steps=20)
+                                          validation_steps=50)
 
 
