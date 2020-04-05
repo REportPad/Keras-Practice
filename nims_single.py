@@ -5,6 +5,9 @@ import numpy as np
 import os
 import pandas as pd
 
+#upload file
+#from google.colab import files
+#uploaded = files.upload()
 
 csv_path = 'C:/ML/city gas/train2.csv'
 
