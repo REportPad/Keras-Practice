@@ -42,7 +42,7 @@ uni_train_mean = uni_data[:TRAIN_SPLIT].mean()
 uni_train_std = uni_data[:TRAIN_SPLIT].std()
 uni_data = (uni_data-uni_train_mean)/uni_train_std
 
-univariate_past_history = 10
+univariate_past_history = 20
 univariate_future_target = 0
 uni_data = uni_data.to_numpy()
 x_train_uni, y_train_uni = univariate_data(uni_data, 0, TRAIN_SPLIT,
@@ -54,30 +54,26 @@ x_val_uni, y_val_uni = univariate_data(uni_data, TRAIN_SPLIT, None,
                                        
 BATCH_SIZE = 5
 BUFFER_SIZE = 10
-
-train_univariate = tf.data.Dataset.from_tensor_slices((x_train_uni, y_train_uni))
-train_univariate = train_univariate.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
-
-val_univariate = tf.data.Dataset.from_tensor_slices((x_val_uni, y_val_uni))
-val_univariate = val_univariate.batch(BATCH_SIZE).repeat()
-
-multi_step_model = tf.keras.models.Sequential()
-multi_step_model.add(tf.keras.layers.LSTM(32,
+#train_univariate = tf.data.Dataset.from_tensor_slices((x_train_uni, y_train_uni))
+#train_univariate = train_univariate.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+#val_univariate = tf.data.Dataset.from_tensor_slices((x_val_uni, y_val_uni))
+#val_univariate = val_univariate.batch(BATCH_SIZE).repeat()
+simple_lstm_model = tf.keras.models.Sequential()
+simple_lstm_model.add(tf.keras.layers.LSTM(32,
                                           return_sequences=True,
                                           input_shape=x_train_uni.shape[-2:]))
-multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
-multi_step_model.add(tf.keras.layers.Dense(12))
-multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
-
+simple_lstm_model.add(tf.keras.layers.LSTM(16, activation='relu'))
+simple_lstm_model.add(tf.keras.layers.Dense(12))
 simple_lstm_model.compile(optimizer='adam', loss='mae')
-
 
 EVALUATION_INTERVAL = 200
 EPOCHS = 10
+simple_lstm_model.fit(x_train_uni, y_train_uni, batch_size = BATCH_SIZE, epochs=EPOCHS)
+#simple_lstm_model.fit(x_train_uni, y_train_uni, epochs=EPOCHS,
+#                      steps_per_epoch=EVALUATION_INTERVAL,
+#                      validation_data=val_univariate, validation_steps=50)
 
-simple_lstm_model.fit(train_univariate, epochs=EPOCHS,
-                      steps_per_epoch=EVALUATION_INTERVAL,
-                      validation_data=val_univariate, validation_steps=50)
 
+#model save
 simple_lstm_model.save('model.h5')
 files.download('model.h5')
