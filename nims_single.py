@@ -64,7 +64,7 @@ val_univariate = val_univariate.batch(BATCH_SIZE).repeat()
 multi_step_model = tf.keras.models.Sequential()
 multi_step_model.add(tf.keras.layers.LSTM(32,
                                           return_sequences=True,
-                                          input_shape=x_train_multi.shape[-2:]))
+                                          input_shape=x_train_uni.shape[-2:]))
 multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
 multi_step_model.add(tf.keras.layers.Dense(12))
 multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
