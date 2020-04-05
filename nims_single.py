@@ -58,10 +58,13 @@ train_univariate = train_univariate.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZ
 val_univariate = tf.data.Dataset.from_tensor_slices((x_val_uni, y_val_uni))
 val_univariate = val_univariate.batch(BATCH_SIZE).repeat()
 
-simple_lstm_model = tf.keras.models.Sequential([
-    tf.keras.layers.LSTM(8, input_shape=x_train_uni.shape[-2:]),
-    tf.keras.layers.Dense(1)
-])
+multi_step_model = tf.keras.models.Sequential()
+multi_step_model.add(tf.keras.layers.LSTM(32,
+                                          return_sequences=True,
+                                          input_shape=x_train_multi.shape[-2:]))
+multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
+multi_step_model.add(tf.keras.layers.Dense(12))
+multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
 simple_lstm_model.compile(optimizer='adam', loss='mae')
 
